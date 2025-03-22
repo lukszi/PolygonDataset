@@ -1,0 +1,6 @@
+# Simple Polygon Generator using binary implementation
+name: spg
+implementation: binary
+bin_dir: "${oc.env:HOME}/polygons/bin"
+params:
+  algorithm: 2opt

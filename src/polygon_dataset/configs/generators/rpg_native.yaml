@@ -1,0 +1,8 @@
+# Random Polygon Generator using native implementation
+name: rpg
+implementation: native
+params:
+  algorithm: 2opt
+  holes: 0
+  smooth: 0
+  cluster: true

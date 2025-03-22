@@ -1,0 +1,27 @@
+# First generator
+- name: rpg
+  implementation: binary
+  bin_dir: "${oc.env:HOME}/polygons/bin"
+  params:
+    algorithm: 2opt
+    holes: 0
+    smooth: 0
+    cluster: true
+
+# Second generator
+# - name: fpg
+#  implementation: binary
+#  bin_dir: "${oc.env:HOME}/polygons/bin"
+#  params:
+#    initial_vertices: 20
+#    holes: 0
+#    kinetic: false
+
+# Third generator (using native implementation)
+- name: rpg
+  implementation: native
+  params:
+    algorithm: growth
+    holes: 0
+    smooth: 0
+    cluster: true

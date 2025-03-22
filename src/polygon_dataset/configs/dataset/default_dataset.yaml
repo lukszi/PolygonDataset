@@ -1,0 +1,9 @@
+# Default dataset configuration
+name: polygon_dataset_v1
+size: 10000
+vertex_count: 88
+dimensionality: 2
+split:
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1

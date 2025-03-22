@@ -1,0 +1,18 @@
+# Native implementations (optional)
+genpoly_rpg @ git+https://github.com/lukszi/python-rpg.git
+visvalingam_c @ git+https://github.com/lukszi/python-visvalingam.git
+
+# Core dependencies
+numpy~=2.2.4
+tqdm~=4.67.1
+hydra-core>=1.2.0
+matplotlib>=3.5.0
+omegaconf>=2.2.0
+tk>=0.1.0  # For visualization GUI
+
+# Development dependencies (optional)
+# pytest>=7.0.0
+# black>=22.0.0
+# isort>=5.10.0
+# mypy>=0.950
+# pylint>=2.15.0

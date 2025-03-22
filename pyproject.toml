@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "polygon-datasets"
+version = "0.1.0"
+description = "Framework for generating, transforming, and managing polygon datasets"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+    "numpy~=2.2.4",
+    "tqdm~=4.67.1",
+    "hydra-core>=1.2.0",
+    "matplotlib>=3.5.0",
+    "omegaconf>=2.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=22.0.0",
+    "isort>=5.10.0",
+    "mypy>=0.950",
+    "pylint>=2.15.0",
+]
+native = [
+    "genpoly_rpg @ git+https://github.com/lukszi/python-rpg.git",
+    "visvalingam_c @ git+https://github.com/lukszi/python-visvalingam.git",
+]
+
+[project.scripts]
+generate-dataset = "polygon_datasets.cli.generate_dataset:main"
+extract-dataset = "polygon_datasets.cli.extract_dataset:main"
+transform-dataset = "polygon_datasets.cli.transform_dataset:main"
+canonicalize-dataset = "polygon_datasets.cli.canonicalize_dataset:main"
+visualize-dataset = "polygon_datasets.cli.visualize_dataset:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["polygon_datasets"]
+
+[tool.setuptools.package-data]
+polygon_datasets = ["py.typed", "configs/**/*.yaml"]

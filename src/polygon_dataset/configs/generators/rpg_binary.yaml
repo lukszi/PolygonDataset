@@ -1,0 +1,9 @@
+# Random Polygon Generator using binary implementation
+name: rpg
+implementation: binary
+bin_dir: "${oc.env:HOME}/polygons/bin"
+params:
+  algorithm: 2opt
+  holes: 0
+  smooth: 0
+  cluster: true

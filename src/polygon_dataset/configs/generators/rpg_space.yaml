@@ -1,0 +1,8 @@
+# Random Polygon Generator using space algorithm
+name: rpg
+implementation: native
+params:
+  algorithm: space
+  holes: 0
+  smooth: 0
+  cluster: true

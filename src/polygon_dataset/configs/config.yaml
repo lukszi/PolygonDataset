@@ -1,0 +1,24 @@
+# Root configuration file for polygon datasets
+
+# Default configurations to include
+defaults:
+  - _self_
+  - dataset: default_dataset
+  - generators:
+    - rpg_binary
+  - transform: visvalingam
+
+# Output directory for datasets
+output_dir: "/root/test-datasets/"
+
+# Debug mode (enables detailed error messages)
+debug: false
+
+# Hydra-specific configuration
+hydra:
+  run:
+    dir: ${output_dir}/.hydra/${dataset.name}/${now:%Y-%m-%d_%H-%M-%S}
+  sweep:
+    dir: ${output_dir}/.hydra/${dataset.name}/${now:%Y-%m-%d_%H-%M-%S}
+  job:
+    chdir: true

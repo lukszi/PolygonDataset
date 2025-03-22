@@ -1,0 +1,8 @@
+# Random Polygon Generator using growth algorithm
+name: rpg
+implementation: native
+params:
+  algorithm: growth
+  holes: 0
+  smooth: 0
+  cluster: true

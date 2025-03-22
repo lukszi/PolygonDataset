@@ -1,0 +1,9 @@
+# Configuration for a dataset with high-resolution polygons
+name: polygon_dataset_high_res
+size: 10000
+vertex_count: 176  # Double the standard vertex count
+dimensionality: 2
+split:
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1

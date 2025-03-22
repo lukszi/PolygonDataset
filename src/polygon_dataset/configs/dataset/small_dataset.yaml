@@ -1,0 +1,9 @@
+# Configuration for a small dataset (useful for testing)
+name: polygon_dataset_small
+size: 1000
+vertex_count: 88
+dimensionality: 2
+split:
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1

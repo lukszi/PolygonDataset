@@ -1,0 +1,7 @@
+# Douglas-Peucker polygon simplification configuration
+algorithm: douglas_peucker
+min_vertices: 10
+batch_size: 400000
+# Resolution steps can be left empty to be calculated automatically
+# based on the vertex_count and min_vertices
+resolution_steps: []

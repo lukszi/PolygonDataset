@@ -1,0 +1,10 @@
+# Super Random Polygon Generator using binary implementation
+name: srpg
+implementation: binary
+bin_dir: "${oc.env:HOME}/polygons/bin"
+params:
+  grid_x: 15
+  grid_y: 15
+  percent: 0.1
+  smooth: 3
+  holes: false
