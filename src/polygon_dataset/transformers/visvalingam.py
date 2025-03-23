@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Tuple
 import logging
 
 import numpy as np
+from numpy.lib.format import open_memmap
 import multiprocessing
 from multiprocessing import Pool
 import gc
@@ -21,6 +22,7 @@ from polygon_dataset.core import PathManager
 from polygon_dataset.transformers.base import Transformer
 from polygon_dataset.transformers.registry import register_transformer
 from polygon_dataset.utils import calculate_resolution_steps
+from visvalingam_c import simplify_multi
 
 # Configure module logger
 logger = logging.getLogger(__name__)
@@ -42,8 +44,6 @@ def _process_polygon_batch(batch_data: Tuple[np.ndarray, List[int], List[int], i
             - Starting index for this batch
             - List of (resolution, processed_data) tuples
     """
-    from visvalingam_c import simplify_multi
-
     polygons, resolutions, adjusted_resolutions, start_idx = batch_data
 
     # Process each polygon in the batch
@@ -225,7 +225,7 @@ class VisvalingamTransformer(Transformer):
             output_file.parent.mkdir(parents=True, exist_ok=True)
 
             # Create memory-mapped file
-            memmap = np.lib.format.open_memmap(
+            memmap = open_memmap(
                 output_file,
                 dtype='float64',
                 mode='w+',
@@ -292,7 +292,7 @@ class VisvalingamTransformer(Transformer):
                 resolution_data = np.concatenate([data for _, data in sorted_results], axis=0)
 
                 # Write to output file
-                memmap = np.lib.format.open_memmap(
+                memmap = open_memmap(
                     output_paths[resolution],
                     dtype='float64',
                     mode='r+',

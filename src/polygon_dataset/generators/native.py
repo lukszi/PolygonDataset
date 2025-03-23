@@ -12,6 +12,7 @@ import random
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
+from numpy.lib.format import open_memmap
 
 try:
     import genpoly_rpg
@@ -119,7 +120,7 @@ class RPGNativeGenerator(Generator):
             shape = (size, vertex_count + 1, 2)  # +1 for closing vertex
 
             # Create the file first, then close it to avoid memory issues
-            data = np.lib.format.open_memmap(
+            data = open_memmap(
                 output_file,
                 dtype='float64',
                 mode='w+',
@@ -142,7 +143,7 @@ class RPGNativeGenerator(Generator):
                 chunk_polygons = self._process_tasks(tasks, num_processes)
 
                 # Write the combined chunk to the output file
-                data = np.lib.format.open_memmap(
+                data = open_memmap(
                     output_file,
                     dtype='float64',
                     mode='r+',

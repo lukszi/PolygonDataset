@@ -6,11 +6,11 @@ This module provides a PathManager class for handling file paths in a consistent
 manner across the package.
 """
 
+import json
 from pathlib import Path
 from typing import List, Optional, Union, Set, Dict, Any, Tuple
 
-import json
-import numpy as np
+from numpy.lib.format import open_memmap
 
 from polygon_dataset.utils.filename_parser import parse_polygon_filename
 
@@ -258,7 +258,7 @@ class PathManager:
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
         # Create the memmap file
-        memmap = np.lib.format.open_memmap(
+        memmap = open_memmap(
             output_file,
             dtype=dtype,
             mode='w+',

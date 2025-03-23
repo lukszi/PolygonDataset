@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union, Tuple
 
 import numpy as np
+from numpy.lib.format import open_memmap
 
 from polygon_dataset.core import PathManager
 from polygon_dataset.utils import calculate_resolution_steps
@@ -87,11 +88,6 @@ class Transformer(ABC):
         resolutions = kwargs.get("resolutions")
         source_dir = kwargs.get("source_dir", path_manager.get_extracted_dir())
 
-        # Create a copy of kwargs without the 'resolutions' key to avoid parameter conflict
-        kwargs_copy = kwargs.copy()
-        if "resolutions" in kwargs_copy:
-            del kwargs_copy["resolutions"]
-
         # Find input files to process using the enhanced PathManager
         try:
             npy_files = path_manager.find_npy_files(
@@ -111,7 +107,7 @@ class Transformer(ABC):
 
         # Process each file
         for file_path in npy_files:
-            self._transform_file(path_manager, file_path, resolutions, **kwargs_copy)
+            self._transform_file(path_manager, file_path, resolutions)
 
     def _transform_file(
             self,
@@ -150,7 +146,6 @@ class Transformer(ABC):
             if components['resolution'] is not None:
                 file_resolution = int(components['resolution'])
                 print(f"Processing file with existing resolution: {file_resolution}")
-                # Specific transformers can implement additional logic here
         except ValueError:
             raise ValueError(f"Invalid file name format: {file_path.name}")
 
@@ -247,7 +242,7 @@ class Transformer(ABC):
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
         # Create memory-mapped file
-        memmap = np.lib.format.open_memmap(
+        memmap = open_memmap(
             output_file,
             dtype=dtype,
             mode='w+',
@@ -311,7 +306,7 @@ class Transformer(ABC):
             )
 
             # Write to output file
-            memmap = np.lib.format.open_memmap(
+            memmap = open_memmap(
                 output_file,
                 dtype='float64',
                 mode='r+',

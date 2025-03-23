@@ -12,9 +12,10 @@ import logging
 import multiprocessing
 from multiprocessing import Pool
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, List
 
 import numpy as np
+from numpy.lib.format import open_memmap
 from tqdm import tqdm
 
 # Configure module logger
@@ -378,7 +379,7 @@ class CanonicalizeTransformer(Transformer):
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
         # Create initial empty file with correct shape
-        memmap = np.lib.format.open_memmap(
+        memmap = open_memmap(
             output_file,
             dtype='float64',
             mode='w+',
@@ -435,7 +436,7 @@ class CanonicalizeTransformer(Transformer):
             processed_data = np.concatenate([data for _, data in batch_results], axis=0)
 
             # Write to output file
-            memmap = np.lib.format.open_memmap(
+            memmap = open_memmap(
                 output_file,
                 dtype='float64',
                 mode='r+',
