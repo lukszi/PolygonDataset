@@ -5,24 +5,83 @@ This module provides functions for parsing and handling the standard filename
 patterns used throughout the polygon datasets package.
 """
 
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 
-def parse_polygon_filename(filename: str) -> Dict[str, str]:
+def _extract_resolution(parts: List[str]) -> Tuple[List[str], Optional[str]]:
+    """
+    Extract resolution from filename parts if present.
+
+    Args:
+        parts: List of filename parts split by underscore.
+
+    Returns:
+        Tuple[List[str], Optional[str]]: Tuple containing:
+            - List of remaining parts with the resolution part removed
+            - Resolution value as string, or None if not present
+
+    Raises:
+        ValueError: If resolution part is invalid (not followed by a number).
+    """
+    # Search for a part starting with 'res'
+    res_index = None
+    for i, part in enumerate(parts):
+        if part.startswith('res'):
+            res_index = i
+            break
+
+    if res_index is None:
+        return parts, None
+
+    # Ensure res is followed by a number
+    if len(parts[res_index]) <= 3 or not parts[res_index][3:].isdigit():
+        raise ValueError(
+            f"Invalid resolution format: {parts[res_index]}. "
+            "Resolution must be followed by a number (e.g., res44)."
+        )
+
+    # Extract resolution value
+    resolution = parts[res_index][3:]  # Remove 'res' prefix
+
+    # Remove resolution part from the list
+    remaining_parts = parts[:res_index] + parts[res_index+1:]
+
+    return remaining_parts, resolution
+
+
+def _validate_parts(parts: List[str], filename: str) -> None:
+    """
+    Validate the number of parts in a filename.
+
+    Args:
+        parts: List of filename parts split by underscore.
+        filename: Original filename for error messages.
+
+    Raises:
+        ValueError: If there are not enough parts in the filename.
+    """
+    if len(parts) < 4:
+        raise ValueError(
+            f"Invalid filename format: {filename}. "
+            "Expected format: {split}_{generator_name}_{generator_implementation}_{algorithm}[_res{resolution}].npy"
+        )
+
+
+def parse_polygon_filename(filename: str) -> Dict[str, Optional[str]]:
     """
     Parse a polygon dataset filename into its components.
 
     Standard filename formats:
-    - Without resolution: {split}_{generator}_{algorithm}.npy
-    - With resolution: {split}_{generator}_{algorithm}_res{resolution}.npy
+    - Without resolution: {split}_{generator_name}_{generator_implementation}_{algorithm}.npy
+    - With resolution: {split}_{generator_name}_{generator_implementation}_{algorithm}_res{resolution}.npy
 
     Args:
         filename: The filename to parse (without directory path).
 
     Returns:
-        Dict[str, str]: Dictionary containing the parsed components:
+        Dict[str, Optional[str]]: Dictionary containing the parsed components:
             - 'split': Dataset split (train/val/test)
-            - 'generator': Generator name
+            - 'generator': Generator name including implementation (e.g., 'rpg_binary')
             - 'algorithm': Algorithm name
             - 'resolution': Resolution value (if present, as string) or None
 
@@ -39,56 +98,27 @@ def parse_polygon_filename(filename: str) -> Dict[str, str]:
     # Filter out empty parts
     parts = [part for part in parts if part]
 
-    # Basic validation
-    if len(parts) < 3:
-        raise ValueError(
-            f"Invalid filename format: {filename}. "
-            "Expected format: {split}_{generator}_{algorithm}[_res{resolution}].npy"
-        )
+    # Extract resolution if present
+    parts, resolution = _extract_resolution(parts)
 
-    # Extract components
-    result = {
-        'split': parts[0],
-        'generator': parts[1],
+    # Validate the remaining parts
+    _validate_parts(parts, filename)
+
+    # Extract split
+    split = parts[0]
+
+    # Extract generator (combine generator_name and generator_implementation)
+    generator = f"{parts[1]}_{parts[2]}"
+
+    # Extract algorithm (everything after the generator)
+    algorithm = '_'.join(parts[3:])
+
+    return {
+        'split': split,
+        'generator': generator,
+        'algorithm': algorithm,
+        'resolution': resolution
     }
-
-    # Check if resolution is present
-    res_index = None
-    for i, part in enumerate(parts):
-        if part.startswith('res'):
-            res_index = i
-            break
-
-    if res_index is not None:
-        # Format with resolution
-        if res_index < 3:
-            raise ValueError(
-                f"Invalid filename format: {filename}. "
-                "Missing algorithm component before resolution."
-            )
-
-        # Check that res is followed by a number
-        if len(parts[res_index]) <= 3 or not parts[res_index][3:].isdigit():
-            raise ValueError(
-                f"Invalid filename format: {filename}. "
-                "Resolution must be followed by a number (e.g., res44)."
-            )
-
-        result['algorithm'] = '_'.join(parts[2:res_index])
-        result['resolution'] = parts[res_index][3:]  # Remove 'res' prefix
-    else:
-        # Format without resolution
-        # Check that the algorithm part is not empty
-        if not parts[2:]:
-            raise ValueError(
-                f"Invalid filename format: {filename}. "
-                "Algorithm component cannot be empty."
-            )
-
-        result['algorithm'] = '_'.join(parts[2:])
-        result['resolution'] = None
-
-    return result
 
 
 def build_polygon_filename(
@@ -102,7 +132,7 @@ def build_polygon_filename(
 
     Args:
         split: Dataset split (train/val/test)
-        generator: Generator name
+        generator: Generator name with implementation (e.g., 'rpg_binary')
         algorithm: Algorithm name
         resolution: Resolution value (optional)
 
@@ -130,7 +160,7 @@ def parse_filename_components(
     Returns:
         Tuple[str, str, str, Optional[int]]: Tuple containing:
             - split: Dataset split (train/val/test)
-            - generator: Generator name
+            - generator: Generator name with implementation (e.g., 'rpg_binary')
             - algorithm: Algorithm name
             - resolution: Resolution value (if present, as int, otherwise None)
 
