@@ -177,6 +177,43 @@ class CanonicalizeTransformer(Transformer):
         _, result = canonicalized_batch
         return result
 
+    def _process_file_by_resolution(
+            self,
+            path_manager: PathManager,
+            file_path: Path,
+            resolutions: List[Optional[int]],
+            split: str,
+            generator: str,
+            algorithm: str,
+            **kwargs: Any
+    ) -> None:
+        """
+        Process a file for each specified resolution.
+
+        Args:
+            path_manager: Path manager for the dataset.
+            file_path: Path to the input file.
+            resolutions: List of resolutions to process (None for original resolution).
+            split: Dataset split name.
+            generator: Generator name.
+            algorithm: Algorithm name.
+            **kwargs: Additional parameters.
+        """
+        # Process for each resolution
+        for resolution in resolutions:
+            # Determine output path based on resolution
+            if resolution is None:
+                output_path = path_manager.get_canonical_path(
+                    generator, algorithm, split
+                )
+            else:
+                output_path = path_manager.get_canonical_path(
+                    generator, algorithm, split, resolution
+                )
+
+            # Canonicalize the file
+            self._canonicalize_file(path_manager, file_path, output_path)
+
     def transform_dataset(
             self,
             path_manager: PathManager,
