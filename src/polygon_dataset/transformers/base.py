@@ -149,15 +149,16 @@ class Transformer(ABC):
         except ValueError:
             raise ValueError(f"Invalid file name format: {file_path.name}")
 
+        # Load one polygon to determine shape and check if file is empty
+        data = np.load(file_path, mmap_mode="r")
+        if len(data) == 0:
+            raise ValueError(f"Empty file: {file_path}")
+
+        vertex_count = data.shape[1]
+        del data
+
         # Determine resolution steps
         if resolutions is None:
-            # Load one polygon to determine shape
-            data = np.load(file_path, mmap_mode="r")
-            vertex_count = data.shape[1]
-            if len(data) == 0:
-                raise ValueError(f"Empty file: {file_path}")
-            del data
-
             resolutions = calculate_resolution_steps(vertex_count, self.min_vertices)
 
         print(f"Resolution steps: {resolutions}")
