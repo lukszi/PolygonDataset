@@ -48,7 +48,7 @@ class RPGBinaryGenerator(BinaryGenerator):
 
         # Build command
         cmd = [
-            str(self.bin_dir / "rpg"),
+            str(self.bin_dir / self._get_binary_name()),
             cluster_flag,
             str(task.vertices),
             "--algo", task.algorithm,
