@@ -1,4 +1,3 @@
-# polygon_dataset/utils/filename_parser.py
 """
 Filename parsing utilities for polygon datasets.
 
@@ -37,6 +36,9 @@ def parse_polygon_filename(filename: str) -> Dict[str, str]:
     # Split the filename into parts
     parts = filename.split('_')
 
+    # Filter out empty parts
+    parts = [part for part in parts if part]
+
     # Basic validation
     if len(parts) < 3:
         raise ValueError(
@@ -59,10 +61,30 @@ def parse_polygon_filename(filename: str) -> Dict[str, str]:
 
     if res_index is not None:
         # Format with resolution
+        if res_index < 3:
+            raise ValueError(
+                f"Invalid filename format: {filename}. "
+                "Missing algorithm component before resolution."
+            )
+
+        # Check that res is followed by a number
+        if len(parts[res_index]) <= 3 or not parts[res_index][3:].isdigit():
+            raise ValueError(
+                f"Invalid filename format: {filename}. "
+                "Resolution must be followed by a number (e.g., res44)."
+            )
+
         result['algorithm'] = '_'.join(parts[2:res_index])
         result['resolution'] = parts[res_index][3:]  # Remove 'res' prefix
     else:
         # Format without resolution
+        # Check that the algorithm part is not empty
+        if not parts[2:]:
+            raise ValueError(
+                f"Invalid filename format: {filename}. "
+                "Algorithm component cannot be empty."
+            )
+
         result['algorithm'] = '_'.join(parts[2:])
         result['resolution'] = None
 

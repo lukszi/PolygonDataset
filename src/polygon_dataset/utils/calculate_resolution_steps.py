@@ -37,6 +37,9 @@ def calculate_resolution_steps(vertex_count: int, min_vertices: int = 10) -> Lis
     resolutions = [vertex_count]
     current_count = vertex_count
 
+    if min_vertices > vertex_count:
+        raise ValueError(f"Minimum vertices ({min_vertices}) cannot exceed original vertex count ({vertex_count})")
+
     while current_count > min_vertices:
         # Try to divide by common factors (2, 3, 4)
         for factor in [2, 3, 4]:

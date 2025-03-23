@@ -40,9 +40,13 @@ def read_line_file(file_path: Union[str, Path]) -> np.ndarray:
     if not file_path.exists():
         raise FileNotFoundError(f"Line file not found: {file_path}")
 
+    # Read lines from line file
     with open(file_path, 'r') as f:
         # Skip the first line (number of vertices might be inaccurate)
-        next(f)
+        try:
+            next(f)
+        except StopIteration:
+            raise ValueError(f"Empty file: {file_path}")
         lines = f.readlines()
 
     # Parse each line as a pair of float coordinates
@@ -52,17 +56,17 @@ def read_line_file(file_path: Union[str, Path]) -> np.ndarray:
         if not line:
             continue
 
+        # Split by whitespace and convert to floats
         try:
-            # Split by whitespace and convert to floats
             coords = list(map(float, line.split()))
-
-            # Ensure we have exactly 2 coordinates
-            if len(coords) != 2:
-                raise ValueError(f"Invalid line format in {file_path}: {line}")
-
-            vertices.append(coords)
         except ValueError as e:
             raise ValueError(f"Error parsing coordinates in {file_path}: {e}")
+
+        # Ensure we have exactly 2 coordinates
+        if len(coords) != 2:
+            raise ValueError(f"Invalid line format in {file_path}: {line}")
+
+        vertices.append(coords)
 
     if not vertices:
         raise ValueError(f"No valid vertices found in {file_path}")
