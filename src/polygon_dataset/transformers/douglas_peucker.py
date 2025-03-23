@@ -286,9 +286,10 @@ class DouglasPeuckerTransformer(Transformer):
             **kwargs: Additional parameters.
         """
         # Get file shape
-        with np.load(file_path) as data:
-            total_polygons = len(data)
-            vertex_count = data.shape[1]
+        data = np.load(file_path, mmap_mode="r")
+        total_polygons = len(data)
+        vertex_count = data.shape[1]
+        del data
 
         # Process each resolution
         for resolution in resolutions:
