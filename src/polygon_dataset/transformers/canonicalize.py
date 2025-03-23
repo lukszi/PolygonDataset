@@ -173,45 +173,8 @@ class CanonicalizeTransformer(Transformer):
         Returns:
             np.ndarray: Canonicalized polygons with the same shape as input.
         """
-        batch_size, num_vertices, dim = polygons.shape
-
-        # Remove closing vertices for processing
-        open_polygons = polygons[:, :-1, :]
-        open_vertices = num_vertices - 1
-
-        # Extract x and y coordinates from open polygons
-        x = open_polygons[..., 0]
-        y = open_polygons[..., 1]
-
-        # Find minimum x coordinates for each polygon
-        min_x = np.min(x, axis=1, keepdims=True)
-        mask_min_x = (x == min_x)
-
-        # Find minimum y among vertices with minimum x
-        y_masked = np.where(mask_min_x, y, np.finfo(np.float32).max)
-        min_y = np.min(y_masked, axis=1, keepdims=True)
-        mask_min = np.logical_and(mask_min_x, (y == min_y))
-
-        # Find the index of the lexicographically smallest vertex for each polygon
-        indices = np.argmax(mask_min.astype(np.float32), axis=1)
-
-        # Create a matrix of indices for each vertex in each polygon after rotation
-        vertex_indices = np.arange(open_vertices)
-        # Broadcasting to create a matrix of shape (batch_size, open_vertices)
-        offset_matrix = (vertex_indices + indices[:, np.newaxis]) % open_vertices
-
-        # Create batch indices
-        batch_indices = np.arange(batch_size)[:, np.newaxis]
-        batch_indices = np.tile(batch_indices, (1, open_vertices))
-
-        # Gather vertices according to rotation offsets
-        rotated_polygons = open_polygons[batch_indices, offset_matrix]
-
-        # Create the result array including the closing vertex
-        result = np.zeros_like(polygons)
-        result[:, :-1, :] = rotated_polygons
-        result[:, -1, :] = rotated_polygons[:, 0, :]  # Add closing vertex
-
+        canonicalized_batch = _process_polygon_batch((polygons, 1))
+        _, result = canonicalized_batch
         return result
 
     def transform_dataset(
