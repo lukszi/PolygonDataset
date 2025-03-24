@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 def extract_dataset(path_manager: PathManager, config: Any) -> None:
     """
-    Extract polygon data from raw files into numpy arrays.
+    Extract polygon data from raw .line files into numpy arrays.
 
     This function orchestrates the extraction process, delegating to specialized
     functions for the actual extraction work.
@@ -42,16 +42,16 @@ def extract_dataset(path_manager: PathManager, config: Any) -> None:
 
     for generator_config in config.generators:
         generator_name = generator_config.name
+        implementation = generator_config.implementation
 
         # Skip native generators as they don't need extraction
-        if generator_config.implementation != "binary":
-            logger.info(f"Skipping extraction for native generator '{generator_name}'")
+        if implementation != "binary":
+            logger.info(f"Skipping extraction for native generator '{generator_name}_{implementation}'")
             continue
 
         logger.info(f"Processing generator '{generator_name}'")
 
         # Process each split
-        split_ratios = config.dataset.split
         splits = ["train", "val", "test"]
 
         for split in splits:
@@ -60,18 +60,19 @@ def extract_dataset(path_manager: PathManager, config: Any) -> None:
                 generator_name=generator_name,
                 algorithm=generator_config.params.get("algorithm", "default"),
                 split=split,
-                expected_vertices=config.dataset.vertex_count
+                expected_vertices=config.dataset.vertex_count,
+                implementation=implementation  # Pass the implementation
             )
 
     logger.info("Polygon extraction completed")
-
 
 def extract_split(
         path_manager: PathManager,
         generator_name: str,
         algorithm: str,
         split: str,
-        expected_vertices: int
+        expected_vertices: int,
+        implementation: str = "binary"  # Add implementation parameter with default
 ) -> None:
     """
     Extract polygon data for a specific split and generator.
@@ -85,12 +86,16 @@ def extract_split(
         algorithm: Algorithm used for generation.
         split: Dataset split (train/val/test).
         expected_vertices: Expected number of vertices in each polygon.
+        implementation: Implementation type (binary or native). Defaults to 'binary'.
 
     Raises:
         ValueError: If extraction fails.
     """
+    # Form the full generator name for the output file
+    full_generator_name = path_manager.get_full_generator_name(generator_name, implementation)
+
     # Get raw files for this generator and split
-    raw_dir = path_manager.get_raw_split_dir(split, generator_name)
+    raw_dir = path_manager.get_raw_split_dir(split, full_generator_name)
     if not raw_dir.exists():
         logger.warning(f"Raw directory not found: {raw_dir}")
         return
@@ -104,14 +109,14 @@ def extract_split(
 
     # Get output directory (will be created if necessary)
     output_file = path_manager.get_processed_path(
-        generator_name, algorithm, split
+        full_generator_name, algorithm, split
     )
 
     # Process raw files into polygons array
     polygons = process_raw_files(
         raw_files=raw_files,
         expected_vertices=expected_vertices,
-        read_file_func=read_line_file  # Dependency injection for testability
+        read_file_func=read_line_file
     )
 
     if not polygons:
