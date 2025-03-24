@@ -205,6 +205,20 @@ class PathManager:
         """
         return self.dataset_path / "config.json"
 
+    @classmethod
+    def get_full_generator_name(cls, generator_name: str, implementation: str) -> str:
+        """
+        Get the full generator name including implementation.
+
+        Args:
+            generator_name: Base generator name (e.g., 'rpg').
+            implementation: Implementation type (e.g., 'binary', 'native').
+
+        Returns:
+            str: Full generator name (e.g., 'rpg_binary').
+        """
+        return f"{generator_name}_{implementation}"
+
     def get_available_algorithms(self, generator: str) -> Set[str]:
         """
         Get all available algorithms for a given generator in this dataset.

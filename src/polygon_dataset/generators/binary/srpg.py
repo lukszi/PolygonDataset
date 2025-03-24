@@ -94,7 +94,7 @@ class SRPGBinaryGenerator(BinaryGenerator):
         # Create tasks for each split
         for split, count in split_sizes.items():
             # Ensure output directory exists
-            split_dir = path_manager.get_raw_split_dir(split, self.name)
+            split_dir = path_manager.get_raw_split_dir(split, self.get_full_name())
             split_dir.mkdir(parents=True, exist_ok=True)
 
             # Create tasks

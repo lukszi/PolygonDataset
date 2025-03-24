@@ -55,6 +55,15 @@ class Generator(ABC):
         """
         pass
 
+    def get_full_name(self) -> str:
+        """
+        Get the full name of the generator.
+
+        Returns:
+            str: Full name of the generator.
+        """
+        return PathManager.get_full_generator_name(self.name, self.implementation)
+
     def _get_split_sizes(
             self,
             num_samples: int,
