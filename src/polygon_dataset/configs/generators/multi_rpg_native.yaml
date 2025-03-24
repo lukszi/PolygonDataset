@@ -1,0 +1,31 @@
+- name: rpg
+  implementation: native
+  params:
+    algorithm: growth
+    holes: 0
+    smooth: 0
+    cluster: true
+
+- name: rpg
+  implementation: native
+  params:
+    algorithm: 2opt
+    holes: 0
+    smooth: 0
+    cluster: true
+
+- name: rpg
+  implementation: native
+  params:
+    algorithm: 2opt_ii
+    holes: 0
+    smooth: 0
+    cluster: true
+
+- name: rpg
+  implementation: native
+  params:
+    algorithm: space
+    holes: 0
+    smooth: 0
+    cluster: true
