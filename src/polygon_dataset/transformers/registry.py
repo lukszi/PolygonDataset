@@ -1,18 +1,49 @@
-# polygon_dataset/transformers/registry.py
-"""
-Registry for polygon transformers.
+from typing import Dict, Type, Any
 
-This module provides a registry for polygon transformers, allowing for dynamic
-lookup and instantiation of transformer classes by name.
-"""
+from polygon_dataset.utils.registry import Registry
+from .strategy import TransformerStrategy
+from .transformer import Transformer
 
-from polygon_dataset.transformers.base import Transformer
-from polygon_dataset.utils import Registry
+# Create a registry for transformer strategies
+strategy_registry = Registry[TransformerStrategy]("TransformerStrategy")
 
-# Create a registry for transformer classes
-transformer_registry = Registry[Transformer]("Transformer")
+# Alias functions for consistency with current API
+register_transformer = strategy_registry.register
 
-# Alias functions for backward compatibility
-register_transformer = transformer_registry.register
-get_transformer = transformer_registry.get
-list_transformers = transformer_registry.list
+
+def get_transformer(name: str, config: Dict[str, Any]) -> Transformer:
+    """
+    Get a transformer by name.
+
+    Args:
+        name: Name of the transformer strategy.
+        config: Configuration parameters.
+
+    Returns:
+        Transformer: Configured transformer with the requested strategy.
+
+    Raises:
+        ValueError: If strategy is not found.
+    """
+    # Get the strategy class
+    strategy_cls = strategy_registry.get(name)
+
+    # Create and configure the strategy
+    strategy = strategy_cls(config)
+
+    # Extract common transformer parameters
+    chunk_size = config.get("batch_size", config.get("chunk_size", 100000))
+    min_vertices = config.get("min_vertices", 10)
+
+    # Create and return the transformer
+    return Transformer(strategy, chunk_size, min_vertices)
+
+
+def list_transformers() -> Dict[str, Type[TransformerStrategy]]:
+    """
+    Get a dictionary of all registered transformer strategies.
+
+    Returns:
+        Dict[str, Type[TransformerStrategy]]: Dictionary mapping names to classes.
+    """
+    return strategy_registry.list()

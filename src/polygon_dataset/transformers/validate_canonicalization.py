@@ -2,8 +2,8 @@
 """
 Tests for the polygon canonicalization transformer.
 
-This module provides tests and benchmarks for the CanonicalizeTransformer class,
-demonstrating its functionality and performance characteristics.
+This module provides tests and benchmarks for the polygon canonicalization
+transformer, demonstrating its functionality and performance characteristics.
 """
 
 import gc
@@ -15,7 +15,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import psutil
 
-from polygon_dataset.transformers.canonicalize import CanonicalizeTransformer
+from polygon_dataset.transformers import Transformer
+from polygon_dataset.transformers.strategies.canonicalize import CanonicalizeStrategy
 
 
 def test_canonicalization():
@@ -29,8 +30,13 @@ def test_canonicalization():
     # Create some sample polygons (all closed - first and last vertices are identical)
     display_polygons, names, polygons = create_example_polygons()
 
-    # Initialize the transformer
-    transformer = CanonicalizeTransformer({"name": "canonicalize"})
+    # Initialize the transformer with canonicalization strategy
+    strategy = CanonicalizeStrategy({"name": "canonicalize"})
+    transformer = Transformer(
+        strategy,
+        chunk_size=100000,  # Default value
+        min_vertices=10     # Default value
+    )
 
     # Canonicalize the polygons
     canonicalized = transformer.transform(polygons)
@@ -179,8 +185,13 @@ def benchmark_canonicalization():
     # Memory monitoring process
     process = psutil.Process(os.getpid())
 
-    # Initialize the transformer once to avoid counting initialization time
-    transformer = CanonicalizeTransformer({"name": "canonicalize"})
+    # Initialize the transformer with canonicalization strategy
+    strategy = CanonicalizeStrategy({"name": "canonicalize"})
+    transformer = Transformer(
+        strategy,
+        chunk_size=100000,  # Default value
+        min_vertices=10     # Default value
+    )
 
     print("Starting canonicalization benchmark...")
 
