@@ -19,10 +19,10 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics :: Machine Learning",
 ]
 dependencies = [
-    "numpy~=2.2.4",
+    "numpy~=2.1.3",
     "tqdm~=4.67.1",
     "hydra-core>=1.2.0",
-    "matplotlib>=3.5.0",
+    "matplotlib>=3.10.0",
     "omegaconf>=2.2.0",
 ]
 
