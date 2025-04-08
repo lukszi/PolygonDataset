@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "polygon-datasets"
+name = "polygon-dataset"
 version = "0.1.0"
-description = "Framework for generating, transforming, and managing polygon datasets"
+description = "Framework for generating, transforming, and managing polygon dataset"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
@@ -41,15 +41,15 @@ native = [
 ]
 
 [project.scripts]
-generate-dataset = "polygon_datasets.cli.generate_dataset:main"
-extract-dataset = "polygon_datasets.cli.extract_dataset:main"
-transform-dataset = "polygon_datasets.cli.transform_dataset:main"
-canonicalize-dataset = "polygon_datasets.cli.canonicalize_dataset:main"
-visualize-dataset = "polygon_datasets.cli.visualize_dataset:main"
+generate-dataset = "polygon_dataset.cli.generate_dataset:main"
+extract-dataset = "polygon_dataset.cli.extract_dataset:main"
+transform-dataset = "polygon_dataset.cli.transform_dataset:main"
+canonicalize-dataset = "polygon_dataset.cli.canonicalize_dataset:main"
+visualize-dataset = "polygon_dataset.cli.visualize_dataset:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-packages = ["polygon_datasets"]
+packages = ["polygon_dataset"]
 
 [tool.setuptools.package-data]
-polygon_datasets = ["py.typed", "configs/**/*.yaml"]
+polygon_dataset = ["py.typed", "configs/**/*.yaml"]
