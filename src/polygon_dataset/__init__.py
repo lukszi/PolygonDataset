@@ -18,7 +18,7 @@ from polygon_dataset.core import PolygonDataset, PathManager
 from polygon_dataset.config import Config, DatasetConfig, GeneratorConfig, TransformConfig
 
 __version__ = "0.1.0"
-__author__ = "Your Name"
+__author__ = "lukszi"
 
 __all__ = [
     "PolygonDataset",

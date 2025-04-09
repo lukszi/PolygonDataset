@@ -7,7 +7,7 @@ name = "polygon-dataset"
 version = "0.1.0"
 description = "Framework for generating, transforming, and managing polygon dataset"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = "~=3.10.12"
 license = {text = "MIT"}
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -46,7 +46,14 @@ visualize-dataset = "polygon_dataset.cli.visualize_dataset:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-packages = ["polygon_dataset"]
+packages = [
+    "polygon_dataset",
+    "polygon_dataset.config",
+    "polygon_dataset.core",
+    "polygon_dataset.generators",
+    "polygon_dataset.transformers",
+    "polygon_dataset.utils"
+]
 
 [tool.setuptools.package-data]
 polygon_dataset = ["py.typed", "configs/**/*.yaml"]
