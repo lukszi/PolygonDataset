@@ -9,9 +9,6 @@ description = "Framework for generating, transforming, and managing polygon data
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
-authors = [
-    {name = "Your Name", email = "your.email@example.com"}
-]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
@@ -21,9 +18,9 @@ classifiers = [
 dependencies = [
     "numpy~=2.1.3",
     "tqdm~=4.67.1",
-    "hydra-core>=1.2.0",
+    "hydra-core>=1.3.2",
     "matplotlib>=3.10.0",
-    "omegaconf>=2.2.0",
+    "omegaconf>=2.3.0",
 ]
 
 [project.optional-dependencies]
