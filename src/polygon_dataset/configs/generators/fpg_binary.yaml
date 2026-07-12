@@ -1,7 +1,7 @@
 # Fast Polygon Generator using binary implementation
 name: fpg
 implementation: binary
-bin_dir: "${oc.env:HOME}/polygon_bins"
+bin_dir: "${oc.env:HOME}/polygons/bin"
 params:
   initial_vertices: 20
   holes: 0
