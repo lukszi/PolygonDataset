@@ -1,0 +1,22 @@
+# Ignore all util tests as they already work properly
+tests/unit/test_utils/test_calculate_resolution_steps.py
+tests/unit/test_utils/test_extract_utils.py
+tests/unit/test_utils/test_read_line_file.py
+tests/unit/test_utils/test_registry.py
+tests/unit/test_utils/test_filename_parser.py
+tests/unit/test_utils/conftest.py
+tests/unit/test_utils/__init__.py
+
+# Ignore all transformer tests as they are all completely broken but will be reworked later.
+# tests/unit/test_transformers/__init__.py
+# tests/unit/test_transformers/test_base.py
+# tests/unit/test_transformers/test_canonicalize.py
+# tests/unit/test_transformers/test_douglas_peucker.py
+# tests/unit/test_transformers/test_visvalingam.py
+
+# Ignore all core tests as they are somewhat broken, but will be reworked later.
+tests/unit/test_core/__init__.py
+tests/unit/test_core/conftest.py
+tests/unit/test_core/test_dataset.py
+tests/unit/test_core/test_path_manager.py
+tests/unit/test_core/test_pipeline.py

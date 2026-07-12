@@ -79,4 +79,4 @@ multirun/
 *.log
 
 # Binary files (generated or downloaded)
-bin/
+bin/.claudesync/
