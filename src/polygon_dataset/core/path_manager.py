@@ -50,9 +50,69 @@ class PathManager:
         self.dataset_path: Path = self.base_path / self.dataset_name
         self.create_dirs: bool = create_dirs
 
+        # Auto-detect old-format ("legacy") datasets from the on-disk config so
+        # path construction matches their algorithm-token-free filenames. New or
+        # not-yet-written datasets default to the current naming scheme.
+        self._legacy: bool = self._detect_legacy_mode()
+        self.dataset_paths.legacy = self._legacy
+
         # Create the dataset directory if requested
         if create_dirs:
             self.directory_manager.ensure_dir(self.dataset_path)
+
+    @property
+    def legacy(self) -> bool:
+        """
+        Whether this dataset uses the old-format (pre-Hydra) naming scheme.
+
+        When ``True``, path construction omits the algorithm token (e.g.
+        ``train_spg_res11.npy`` rather than ``train_spg_2opt_res11.npy``) and
+        the ``algorithm`` argument of the path methods is accepted but ignored.
+        Detected automatically from ``config.json`` at construction time.
+        """
+        return self._legacy
+
+    def _detect_legacy_mode(self) -> bool:
+        """
+        Detect whether the dataset on disk uses the old-format naming scheme.
+
+        Returns:
+            bool: ``True`` for an old-format dataset, ``False`` otherwise
+            (including when no config is present or it cannot be parsed).
+        """
+        try:
+            config = self.config_manager.load_config()
+        except (FileNotFoundError, ValueError):
+            return False
+        return self._is_legacy_config(config)
+
+    @staticmethod
+    def _is_legacy_config(config: Dict[str, Any]) -> bool:
+        """
+        Classify a loaded dataset config as old-format ("legacy") or new-format.
+
+        New-format configs (written by the Hydra pipeline) key
+        ``generator_configs`` by full generator name and store per-generator
+        details under ``implementation`` / ``params``. Old-format configs (e.g.
+        the v7 dataset) key it by bare generator name (``spg``/``fpg``/``rpg``)
+        and carry a top-level ``generator_type`` field instead.
+
+        Args:
+            config: The loaded configuration dictionary.
+
+        Returns:
+            bool: ``True`` when the config matches the old format.
+        """
+        gen_cfgs = config.get("generator_configs")
+        if not isinstance(gen_cfgs, dict) or not gen_cfgs:
+            return False
+
+        entries = [e for e in gen_cfgs.values() if isinstance(e, dict)]
+        # Any new-format marker is decisive: treat as current naming.
+        if any("implementation" in e or "params" in e for e in entries):
+            return False
+        # Otherwise require a positive old-format marker to switch modes.
+        return any("generator_type" in e for e in entries)
 
     # Directory access methods with directory creation support
     def get_dataset_root(self) -> Path:

@@ -21,7 +21,8 @@ class DatasetPaths:
     def __init__(
             self,
             base_path: Union[str, Path],
-            dataset_name: str
+            dataset_name: str,
+            legacy: bool = False
     ) -> None:
         """
         Initialize the dataset paths.
@@ -29,10 +30,15 @@ class DatasetPaths:
         Args:
             base_path: Root directory for all datasets.
             dataset_name: Name of the dataset.
+            legacy: When ``True``, construct old-format (pre-Hydra) filenames
+                that omit the algorithm token, e.g. ``train_spg_res11.npy``
+                instead of ``train_spg_2opt_res11.npy``. Defaults to ``False``
+                (current/new-format behaviour).
         """
         self.base_path: Path = Path(base_path)
         self.dataset_name: str = dataset_name
         self.dataset_path: Path = self.base_path / self.dataset_name
+        self.legacy: bool = legacy
 
     def get_dataset_root(self) -> Path:
         """
@@ -112,8 +118,15 @@ class DatasetPaths:
 
         Returns:
             Path: Path to the processed NPY file.
+
+        Note:
+            In legacy mode the ``algorithm`` argument is accepted for signature
+            compatibility but ignored, producing ``{split}_{generator}.npy``.
         """
-        filename = f"{split}_{generator}_{algorithm}.npy"
+        if self.legacy:
+            filename = f"{split}_{generator}.npy"
+        else:
+            filename = f"{split}_{generator}_{algorithm}.npy"
         return self.get_extracted_dir() / filename
 
     def get_resolution_path(
@@ -134,8 +147,15 @@ class DatasetPaths:
 
         Returns:
             Path: Path to the resolution-specific NPY file.
+
+        Note:
+            In legacy mode the ``algorithm`` argument is accepted for signature
+            compatibility but ignored, producing ``{split}_{generator}_res{N}.npy``.
         """
-        filename = f"{split}_{generator}_{algorithm}_res{resolution}.npy"
+        if self.legacy:
+            filename = f"{split}_{generator}_res{resolution}.npy"
+        else:
+            filename = f"{split}_{generator}_{algorithm}_res{resolution}.npy"
         return self.get_transformed_dir() / filename
 
     def get_canonical_path(
@@ -156,8 +176,17 @@ class DatasetPaths:
 
         Returns:
             Path: Path to the canonicalized NPY file.
+
+        Note:
+            In legacy mode the ``algorithm`` argument is accepted for signature
+            compatibility but ignored.
         """
-        if resolution:
+        if self.legacy:
+            if resolution:
+                filename = f"{split}_{generator}_res{resolution}.npy"
+            else:
+                filename = f"{split}_{generator}.npy"
+        elif resolution:
             filename = f"{split}_{generator}_{algorithm}_res{resolution}.npy"
         else:
             filename = f"{split}_{generator}_{algorithm}.npy"

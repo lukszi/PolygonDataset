@@ -210,6 +210,36 @@ dataset_name/
     └── ...
 ```
 
+New-format datasets name their arrays with a generation-algorithm token, e.g.
+`extracted/train_rpg_binary_2opt.npy` and
+`transformed/train_rpg_binary_2opt_res22.npy`.
+
+### Legacy (old-format) datasets
+
+`PathManager` transparently supports pre-Hydra datasets (e.g. the historical
+`v7` set), whose files omit the algorithm token —
+`extracted/train_spg.npy`, `transformed/train_spg_res11.npy`, and bare
+generator names (`spg`/`fpg`/`rpg`) in `raw/{split}/`. These datasets are
+detected automatically from the shape of their `config.json`: old-format
+configs key `generator_configs` by bare generator name and carry a
+`generator_type` field, whereas new-format configs key it by full name and use
+`implementation`/`params`.
+
+When a legacy dataset is detected, `PathManager.legacy` is `True` and every
+path method omits the algorithm token. The public 4-argument signatures are
+unchanged: the `algorithm` argument is still accepted (so consumers need no
+special-casing) but is ignored during path construction. New-format datasets
+are unaffected.
+
+```python
+from polygon_dataset.core import PathManager
+
+pm = PathManager(base_path="/root/datasets", dataset_name="v7")
+pm.legacy  # True for old-format datasets
+pm.get_resolution_path("spg", "2opt", "train", 11)
+# .../v7/transformed/train_spg_res11.npy   (algorithm token dropped)
+```
+
 ## Using the Dataset API
 
 ```python
