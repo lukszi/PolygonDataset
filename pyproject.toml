@@ -46,14 +46,9 @@ visualize-dataset = "polygon_dataset.cli.visualize_dataset:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-packages = [
-    "polygon_dataset",
-    "polygon_dataset.config",
-    "polygon_dataset.core",
-    "polygon_dataset.generators",
-    "polygon_dataset.transformers",
-    "polygon_dataset.utils"
-]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.package-data]
 polygon_dataset = ["py.typed", "configs/**/*.yaml"]
