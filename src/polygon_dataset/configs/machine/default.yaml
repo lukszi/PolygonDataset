@@ -1,0 +1,14 @@
+# Machine profile: portable default
+#
+# A machine-agnostic fallback that runs on an unconfigured host without
+# editing a committed profile. Absolute paths are sourced from environment
+# variables, falling back to sensible relative / $HOME-based defaults.
+#
+# To add a new machine, copy this file to `<name>.yaml`, replace the values
+# with absolute paths, and select it with `machine=<name>`.
+
+# Root directory where datasets are read from and written to.
+output_dir: ${oc.env:POLYGON_DATASETS_ROOT,./datasets}
+
+# Directory containing the compiled polygon generator binaries.
+bin_dir: ${oc.env:POLYGON_BIN_DIR,${oc.env:HOME}/polygons/bin}

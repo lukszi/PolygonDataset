@@ -3,13 +3,16 @@
 # Default configurations to include
 defaults:
   - _self_
+  - machine: wsl
   - dataset: default_dataset
   - generators:
     - rpg_binary
   - transform: visvalingam
 
-# Output directory for datasets
-output_dir: "/root/test-datasets/"
+# Output directory for datasets.
+# Machine-specific; resolved from the selected machine profile
+# (src/polygon_dataset/configs/machine/<name>.yaml, chosen via `machine=<name>`).
+output_dir: ${machine.output_dir}
 
 # Debug mode (enables detailed error messages)
 debug: false

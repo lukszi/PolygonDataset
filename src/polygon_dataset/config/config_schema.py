@@ -222,12 +222,34 @@ class TransformConfig:
 
 
 @dataclass
+class MachineConfig:
+    """
+    Machine-specific filesystem paths.
+
+    Selected via the ``machine`` config group
+    (``configs/machine/<name>.yaml``, chosen with ``machine=<name>``). This is
+    the single place where absolute, host-dependent paths live; other configs
+    reference these values through interpolation (e.g. ``${machine.output_dir}``,
+    ``${machine.bin_dir}``).
+    """
+
+    output_dir: str = MISSING
+    """Root directory where datasets are read from and written to."""
+
+    bin_dir: str = MISSING
+    """Directory containing the compiled polygon generator binaries."""
+
+
+@dataclass
 class Config:
     """
     Root configuration for the polygon datasets package.
 
     This is the top-level configuration that includes all other config components.
     """
+
+    machine: MachineConfig = field(default_factory=MachineConfig)
+    """Machine-specific filesystem paths (dataset root, binary directory)."""
 
     dataset: DatasetConfig = MISSING
     """Configuration for the dataset."""
@@ -238,8 +260,8 @@ class Config:
     transform: TransformConfig = field(default_factory=TransformConfig)
     """Configuration for polygon transformation."""
 
-    output_dir: str = "./datasets"
-    """Directory where datasets will be stored."""
+    output_dir: str = "${machine.output_dir}"
+    """Directory where datasets will be stored (resolved from the machine profile)."""
 
 
 # Register configs with Hydra

@@ -112,6 +112,46 @@ The project follows a modular architecture organized into several packages:
 
 The framework uses Hydra for configuration management, allowing for flexible parameterization of all aspects of dataset generation and processing.
 
+### Machine Profiles
+
+All host-specific absolute paths (the dataset root / `output_dir` and the generator
+`bin_dir`) are isolated in *machine profiles* under
+`src/polygon_dataset/configs/machine/`. Each profile is a committed, git-tracked
+YAML file that defines those paths for one machine:
+
+```yaml
+# configs/machine/wsl.yaml
+output_dir: /root/datasets      # dataset root (read + write)
+bin_dir: /root/polygons/bin     # compiled generator binaries
+```
+
+A profile is selected through the Hydra defaults list (`machine: wsl` in
+`config.yaml`) and can be overridden per run on the CLI:
+
+```bash
+# Use a different committed profile
+generate-dataset machine=default dataset=small_dataset
+
+# Or override an individual path
+generate-dataset machine.output_dir=/mnt/data/polygons dataset=small_dataset
+```
+
+Everything else references these values via interpolation, so absolute paths
+appear in exactly one place:
+
+- `output_dir: ${machine.output_dir}` in `config.yaml`
+- `bin_dir: "${machine.bin_dir}"` in the binary generator configs
+
+Two profiles ship with the package:
+
+- **`wsl`** – absolute paths for the WSL development box (the default).
+- **`default`** – a portable fallback that reads `POLYGON_DATASETS_ROOT` /
+  `POLYGON_BIN_DIR` (falling back to `./datasets` and `$HOME/polygons/bin`), so
+  the package runs on an unconfigured host without editing a committed file.
+
+To add a machine, copy `default.yaml` to `configs/machine/<name>.yaml`, fill in
+absolute paths, and select it with `machine=<name>`.
+
 ### Example Configuration
 
 ```yaml

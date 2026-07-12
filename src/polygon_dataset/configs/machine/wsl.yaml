@@ -1,0 +1,13 @@
+# Machine profile: WSL (Ubuntu 22.04 development box)
+#
+# Absolute, machine-specific filesystem paths for the WSL environment.
+# Selected by default in config.yaml (`machine: wsl`) and overridable on the
+# CLI with `machine=<name>`. Every other config references these values via
+# interpolation (e.g. `output_dir: ${machine.output_dir}`,
+# `bin_dir: ${machine.bin_dir}`), so absolute paths live here and nowhere else.
+
+# Root directory where datasets are read from and written to.
+output_dir: /root/datasets
+
+# Directory containing the compiled polygon generator binaries.
+bin_dir: /root/polygons/bin
