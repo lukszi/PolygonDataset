@@ -17,7 +17,7 @@ from polygon_dataset.generators.binary import (
     SPGBinaryGenerator,
     SRPGBinaryGenerator,
 )
-from polygon_dataset.generators.native import RPGNativeGenerator
+from polygon_dataset.generators.native import RPGNativeGenerator, FPGNativeGenerator
 
 __all__ = [
     "Generator",
@@ -29,4 +29,5 @@ __all__ = [
     "SPGBinaryGenerator",
     "SRPGBinaryGenerator",
     "RPGNativeGenerator",
+    "FPGNativeGenerator",
 ]

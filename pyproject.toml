@@ -36,6 +36,7 @@ dev = [
 ]
 native = [
     "genpoly_rpg @ git+https://github.com/lukszi/python-rpg.git",
+    "genpoly_fpg @ git+https://github.com/lukszi/python-fpg.git",
     "visvalingam_c @ git+https://github.com/lukszi/python-visvalingam.git",
 ]
 

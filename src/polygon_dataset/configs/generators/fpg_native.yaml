@@ -1,0 +1,6 @@
+# Fast Polygon Generator using native implementation
+name: fpg
+implementation: native
+params:
+  initial_vertices: 20
+  radius: 1.0
