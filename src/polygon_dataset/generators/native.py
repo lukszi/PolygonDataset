@@ -21,9 +21,7 @@ from polygon_dataset.utils.chunking import write_chunk_to_file, create_empty_mem
 try:
     import genpoly_rpg
 except ImportError:
-    raise ImportError(
-        "genpoly_rpg module not found. Please install it to use native RPG generator."
-    )
+    genpoly_rpg = None
 
 from polygon_dataset.core import PathManager
 from polygon_dataset.generators.base import Generator
@@ -54,6 +52,11 @@ class RPGNativeGenerator(Generator):
         Raises:
             ImportError: If the genpoly_rpg module is not available.
         """
+        if genpoly_rpg is None:
+            raise ImportError(
+                "genpoly_rpg module not found. Install the 'native' extra "
+                "(polygon-dataset[native]) to use the native RPG generator."
+            )
         super().__init__(config)
 
     def _generate_batch(self, task: RPGNativeTask) -> np.ndarray:
